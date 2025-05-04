@@ -1,5 +1,5 @@
 // Uncomment the code below and write your tests
-// import { readFileAsynchronously, doStuffByTimeout, doStuffByInterval } from '.';
+import { doStuffByTimeout, doStuffByInterval } from '.';
 
 describe('doStuffByTimeout', () => {
   beforeAll(() => {
@@ -11,11 +11,30 @@ describe('doStuffByTimeout', () => {
   });
 
   test('should set timeout with provided callback and timeout', () => {
-    // Write your test here
+    const callback = jest.fn();
+    const timeout = 1000;
+
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+
+    doStuffByTimeout(callback, timeout);
+    expect(setTimeoutSpy).toHaveBeenCalledWith(callback, timeout);
+
+    setTimeoutSpy.mockRestore();
   });
 
   test('should call callback only after timeout', () => {
-    // Write your test here
+    const callback = jest.fn();
+    const timeout = 2000;
+
+    doStuffByTimeout(callback, timeout);
+
+    expect(callback).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(timeout / 2);
+    expect(callback).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(timeout / 2);
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -29,11 +48,30 @@ describe('doStuffByInterval', () => {
   });
 
   test('should set interval with provided callback and timeout', () => {
-    // Write your test here
+    const callback = jest.fn();
+    const interval = 1000;
+
+    const setIntervalSpy = jest.spyOn(global, 'setInterval');
+    doStuffByInterval(callback, interval);
+
+    expect(setIntervalSpy).toHaveBeenCalledWith(callback, interval);
   });
 
   test('should call callback multiple times after multiple intervals', () => {
-    // Write your test here
+    const callback = jest.fn();
+    const interval = 1000;
+
+    doStuffByInterval(callback, interval);
+    expect(callback).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(interval);
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(interval);
+    expect(callback).toHaveBeenCalledTimes(2);
+
+    jest.advanceTimersByTime(interval);
+    expect(callback).toHaveBeenCalledTimes(3);
   });
 });
 
